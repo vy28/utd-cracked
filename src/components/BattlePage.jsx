@@ -20,6 +20,7 @@ const BattlePage = ({ profiles, onVote }) => {
       }
     }
     setPair([profiles[indices[0]], profiles[indices[1]]]);
+    // Do not automatically hide the names; wait for "Rank Next" click.
     setReveal(false);
     setSelectedWinner(null);
   };
@@ -34,7 +35,7 @@ const BattlePage = ({ profiles, onVote }) => {
     if (reveal) return; // Prevent re-selection if already revealed.
     const winner = pair.find(profile => profile.id === winnerId);
     const loser = pair.find(profile => profile.id !== winnerId);
-    // Update Elo ratings.
+    // Update Elo ratings using the onVote callback.
     onVote(winnerId, loser.id);
     setSelectedWinner(winnerId);
     setReveal(true);
