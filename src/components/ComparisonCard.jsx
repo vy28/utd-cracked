@@ -1,10 +1,11 @@
 import React from 'react';
 
-const ComparisonCard = ({ profile, onVote, reveal }) => {
+const ComparisonCard = ({ profile, onSelect, reveal, isSelected }) => {
   return (
     <div 
-      className="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:shadow-xl transition"
-      onClick={() => onVote(profile.id)}
+      className={`bg-white shadow-md rounded-lg p-4 cursor-pointer hover:shadow-xl transition 
+                  ${isSelected ? 'border-4 border-green-500' : ''}`}
+      onClick={() => { if (!reveal) onSelect(profile.id); }}
     >
       <img 
         src={profile.imageUrl} 

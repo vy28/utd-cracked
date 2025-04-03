@@ -4,8 +4,9 @@ import ComparisonCard from './ComparisonCard';
 const BattlePage = ({ profiles, onVote }) => {
   const [pair, setPair] = useState([]);
   const [reveal, setReveal] = useState(false);
+  const [selectedWinner, setSelectedWinner] = useState(null);
 
-  // Select two random, distinct profiles.
+  // Generate a new pair of profiles.
   const generatePair = () => {
     if (profiles.length < 2) {
       setPair([]);
@@ -19,23 +20,29 @@ const BattlePage = ({ profiles, onVote }) => {
       }
     }
     setPair([profiles[indices[0]], profiles[indices[1]]]);
+    setReveal(false);
+    setSelectedWinner(null);
   };
 
-  // Generate a new pair when the profiles list changes or on initial mount.
+  // Generate a pair on mount and whenever profiles change.
   useEffect(() => {
     generatePair();
   }, [profiles]);
 
-  // When a vote is cast, update Elo ratings, reveal names, then refresh after 2 seconds.
-  const handleVote = (winnerId) => {
+  // Handle selection of a winner.
+  const handleSelection = (winnerId) => {
+    if (reveal) return; // Prevent selecting again if already revealed
     const winner = pair.find(profile => profile.id === winnerId);
     const loser = pair.find(profile => profile.id !== winnerId);
+    // Update Elo ratings using the onVote callback from App.
     onVote(winnerId, loser.id);
+    setSelectedWinner(winnerId);
     setReveal(true);
-    setTimeout(() => {
-      setReveal(false);
-      generatePair();
-    }, 2000);
+  };
+
+  // Proceed to next pair.
+  const handleNext = () => {
+    generatePair();
   };
 
   if (profiles.length < 2) {
@@ -49,12 +56,23 @@ const BattlePage = ({ profiles, onVote }) => {
           <ComparisonCard 
             key={profile.id} 
             profile={profile} 
-            onVote={handleVote} 
+            onSelect={handleSelection} 
             reveal={reveal} 
+            isSelected={selectedWinner === profile.id} 
           />
         ))}
       </div>
-      <p className="mt-4 text-gray-600">Click on the profile you think is more "cracked".</p>
+      {reveal && (
+        <button 
+          onClick={handleNext}
+          className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Rank Next
+        </button>
+      )}
+      <p className="mt-4 text-gray-600">
+        Click on the profile you think is more "cracked".
+      </p>
     </div>
   );
 };
