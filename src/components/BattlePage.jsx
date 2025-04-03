@@ -6,7 +6,7 @@ const BattlePage = ({ profiles, onVote }) => {
   const [reveal, setReveal] = useState(false);
   const [selectedWinner, setSelectedWinner] = useState(null);
 
-  // Generate a new pair of profiles.
+  // Function to generate a new pair of profiles.
   const generatePair = () => {
     if (profiles.length < 2) {
       setPair([]);
@@ -24,23 +24,23 @@ const BattlePage = ({ profiles, onVote }) => {
     setSelectedWinner(null);
   };
 
-  // Generate a pair on mount and whenever profiles change.
+  // Generate a new pair on mount or when profiles change.
   useEffect(() => {
     generatePair();
   }, [profiles]);
 
-  // Handle selection of a winner.
+  // Handle selection of the winner.
   const handleSelection = (winnerId) => {
-    if (reveal) return; // Prevent selecting again if already revealed
+    if (reveal) return; // Prevent re-selection if already revealed.
     const winner = pair.find(profile => profile.id === winnerId);
     const loser = pair.find(profile => profile.id !== winnerId);
-    // Update Elo ratings using the onVote callback from App.
+    // Update Elo ratings.
     onVote(winnerId, loser.id);
     setSelectedWinner(winnerId);
     setReveal(true);
   };
 
-  // Proceed to next pair.
+  // Move to the next battle when "Rank Next" is clicked.
   const handleNext = () => {
     generatePair();
   };
